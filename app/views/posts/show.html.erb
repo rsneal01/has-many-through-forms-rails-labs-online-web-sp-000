@@ -3,14 +3,23 @@
 <br>
 <%= @post.content %>
 <br>
-<%= @post.categories.first.name %>
+
+<% if !@post.categories.empty? %>
+    <%= @post.categories.first.name %>
+    <% end %>
 <br>
 <% @post.comments.each do |comment| %>
-    <%= comment.content %>
+    <%= comment.user.username %> says: <%= comment.content %>
 <% end %>
 <br>
-<%= form_for @comment do |f| %>
-    <%= f.collection_select :user, User.all, :id, :username %>
+<%= form_for @post.comments.build do |f| %>
+    <%= f.collection_select :user_id, User.all, :id, :username %>
+    <%= f.fields_for :users_attributes, @post.users.build do |users_fields| %>
+        <%= users_fields.text_field :username %>
+      <% end %>
+      <%= f.label "Content" %>
+      <%= f.text_field :content %>
+    <%= f.hidden_field :post_id, value: @post.id %>
     <%= f.submit %>
 <% end %>
 
