@@ -8,13 +8,17 @@
     <%= @post.categories.first.name %>
     <% end %>
 <br>
-<% @post.comments.each do |comment| %>
-    <%= comment.user.username %> says: <%= comment.content %>
+<% @post.users.distinct.each do |user| %> 
+    <%= link_to user.username, user_path(user) %>  
 <% end %>
+
+<% @post.comments.each do |comment| %>
+    says: <%= comment.content %>
+    <% end %>
 <br>
 <%= form_for @post.comments.build do |f| %>
     <%= f.collection_select :user_id, User.all, :id, :username %>
-    <%= f.fields_for :users_attributes, @post.users.build do |users_fields| %>
+    <%= f.fields_for :user_attributes, User.new do |users_fields| %>
         <%= users_fields.text_field :username %>
       <% end %>
       <%= f.label "Content" %>
